@@ -7,12 +7,11 @@
 
 using namespace std;
 
-
+void start();
 void render_map();
-void RandomPosFood();
 void input();
 bool update_snake();
-void start();
+void RandomPosFood();
 bool end();
 
 struct snake_block {
@@ -20,13 +19,11 @@ struct snake_block {
 	int x;
 	int y;
 };
-
 struct snake_head {
 	char diraction;
 	int x;
 	int y;
 };
-
 struct food {
 	int x;
 	int y;
@@ -40,11 +37,9 @@ food apple;
 int best = 0;
 
 const int mapsize = 15;
-
 char map[mapsize][mapsize];
 
 int speed;
-
 
 void main() {
 	while (true) {
@@ -54,16 +49,75 @@ void main() {
 
 		while (true) {
 			input();
-			if (update_snake() == false)
+			if (update_snake() == false) {
 				if (end() == false)
 					return;
+				break;
+			}
+			system("cls");
 			render_map();
 		}
 	}
 }
 
 
+void start() {
+	//speed selection
+	while (true) {
+		bool temp = true;
+		cout << "choose a level of difficulty for the game(print 1, 2 or 3)\n";
+		int tmp;
+		cin >> tmp;
+		switch (tmp) {
+		case 1:
+			speed = 40;
+			break;
+		case 2:
+			speed = 30;
+			break;
+		case 3:
+			speed = 20;
+			break;
+		default:
+			cout << "invalid input";
+			temp = false;
+			break;
+		}
+		if (temp == true)
+			break;
+	} //
+
+	//map creation
+	for (int i = 0; i < mapsize; i++) {
+		for (int k = 0; k < mapsize; k++) {
+			if (i == 0 || k == 0 || i == mapsize - 1 || k == mapsize - 1)
+				map[i][k] = '#';
+			else
+				map[i][k] = ' ';
+		}
+	}
+
+	//snake info creation
+	for (int i = 0; i < len; i++) {
+		snake_block temp;
+		temp.index = i;
+		temp.x = 8 - i;
+		temp.y = 6;
+		body.push_back(temp);
+	}
+	head.x = 8;
+	head.y = 6;
+	head.diraction = 'd';
+
+	//snake creation on map
+	map[head.y][head.x] = 'O';
+	for (snake_block i : body) {
+		map[i.y][i.x] = 'O';
+	}
+}
+
 bool update_snake() {
+	//checking user input
 	switch (head.diraction)
 	{
 	case 'd':
@@ -82,6 +136,7 @@ bool update_snake() {
 		break;
 	}
 
+	//checking of position
 	if (map[head.y][head.x] == '#' || map[head.y][head.x] == 'O') {
 		return false;
 	}
@@ -90,11 +145,12 @@ bool update_snake() {
 		RandomPosFood();
 	}
 
-
+	//index incriment
 	for (snake_block& i : body) {
 		i.index++;
 	}
 
+	//deliting of last block of snake
 	int k = 0;
 	for (snake_block& i : body) {
 		if (i.index >= len) {
@@ -104,43 +160,17 @@ bool update_snake() {
 		k++;
 	}
 
-
+	//adding a new first block
 	snake_block tmp;
 	tmp.index = 0;
 	tmp.x = head.x;
 	tmp.y = head.y;
 	body.push_back(tmp);
 
+	//snake updating on a map
 	map[head.y][head.x] = 'O';
 	for (snake_block& i : body) {
 		map[i.y][i.x] = 'O';
-	}
-}
-
-void render_map() {
-	cout << "lenght = " << len << endl;
-	for (int i = 0; i < mapsize; i++) {
-		for (int k = 0; k < mapsize; k++) {
-			cout << map[i][k] << ' ';
-		}
-		cout << endl;
-	}
-}
-
-void RandomPosFood() {
-	while (true) {
-		random_device rd;
-		mt19937 gen(rd());
-		uniform_int_distribution<> dist(1, mapsize - 2);
-		int y = dist(gen);
-		int x = dist(gen);
-
-		if (map[y][x] == ' ') {
-			apple.x = x;
-			apple.y = y;
-			map[apple.y][apple.x] = 'H';
-			break;
-		}
 	}
 }
 
@@ -184,67 +214,34 @@ void input() {
 		time_left = i;
 	}
 	this_thread::sleep_for(chrono::milliseconds(speed - time_left));
-	system("cls");
 }
 
-void start() {
+void RandomPosFood() {
 	while (true) {
-		bool temp = true;
-		cout << "choose a level of difficulty for the game(print 1, 2 or 3)\n";
-		int tmp;
-		cin >> tmp;
-		switch (tmp) {
-		case 1:
-			speed = 40;
-			break;
-		case 2:
-			speed = 30;
-			break;
-		case 3:
-			speed = 20;
-			break;
-		default:
-			cout << "invalid input";
-			temp = false;
+		random_device rd;
+		mt19937 gen(rd());
+		uniform_int_distribution<> dist(1, mapsize - 2);
+		int y = dist(gen);
+		int x = dist(gen);
+
+		if (map[y][x] == ' ') {
+			apple.x = x;
+			apple.y = y;
+			map[apple.y][apple.x] = 'H';
 			break;
 		}
-		if (temp == true)
-			break;
-	}
-
-	for (int i = 0; i < mapsize; i++) {
-		for (int k = 0; k < mapsize; k++) {
-			if (i == 0 || k == 0 || i == mapsize - 1 || k == mapsize - 1)
-				map[i][k] = '#';
-			else
-				map[i][k] = ' ';
-		}
-	}
-
-	for (int i = 0; i < len; i++) {
-		snake_block temp;
-		temp.index = i;
-		temp.x = 8 - i;
-		temp.y = 6;
-		body.push_back(temp);
-	}
-	head.x = 8;
-	head.y = 6;
-	head.diraction = 'd';
-	int tmp = body.size();
-	map[head.y][head.x] = 'O';
-	for (int i = 0; i < tmp; i++) {
-		map[body[i].y][body[i].x] = 'O';
 	}
 }
 
 bool end() {
+	cout << "GAME OVER\n\n\n";
+	if (len > best)
+		best = len;
+	cout << "your result: " << len << "\t\t best reuslt: " << best << endl;;
+
 	while (true) {
 		bool find = true;
-		if (len > best)
-			best = len;
-		cout << "GAME OVER\n\n\n";
-		cout << "your result: " << len << "\t\t best reuslt: " << best << endl;;
+
 		cout << "do you want to start new game? (enter y if yes, or e if no)\n";
 		char tmp;
 		cin >> tmp;
@@ -254,7 +251,6 @@ bool end() {
 			body.clear();
 			len = 3;
 			system("cls");
-			main();
 			break;
 		case 'e':
 			return false;
@@ -266,5 +262,15 @@ bool end() {
 		}
 		if (find == true)
 			break;
+	}
+}
+
+void render_map() {
+	cout << "lenght = " << len << endl;
+	for (int i = 0; i < mapsize; i++) {
+		for (int k = 0; k < mapsize; k++) {
+			cout << map[i][k] << ' ';
+		}
+		cout << endl;
 	}
 }
