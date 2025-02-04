@@ -15,7 +15,7 @@ bool update_snake();
 void start();
 bool end();
 
-struct snake_block{
+struct snake_block {
 	int index;
 	int x;
 	int y;
@@ -41,13 +41,13 @@ int best = 0;
 
 const int mapsize = 15;
 
-char map[mapsize][mapsize] ;
+char map[mapsize][mapsize];
 
 int speed;
 
 
 void main() {
-	while(true){
+	while (true) {
 		start();
 		RandomPosFood();
 		render_map();
@@ -90,7 +90,7 @@ bool update_snake() {
 		RandomPosFood();
 	}
 
-	
+
 	for (snake_block& i : body) {
 		i.index++;
 	}
@@ -147,7 +147,7 @@ void RandomPosFood() {
 void input() {
 	int time_left = 0;
 	for (int i = 0; i < speed; i++) {
-		if (_kbhit()) { 
+		if (_kbhit()) {
 			char key = _getch();
 			if (key == 'd') {
 				if (head.diraction == 'a') {
@@ -155,9 +155,9 @@ void input() {
 				}
 				head.diraction = 'd';
 				break;
-			}	
+			}
 			else if (key == 'w') {
-				
+
 				if (head.diraction == 's') {
 					continue;
 				}
@@ -165,7 +165,7 @@ void input() {
 				break;
 			}
 			else if (key == 'a') {
-				
+
 				if (head.diraction == 'd') {
 					continue;
 				}
@@ -178,7 +178,7 @@ void input() {
 				}
 				head.diraction = 's';
 				break;
-			}	
+			}
 		}
 		this_thread::sleep_for(chrono::milliseconds(1));
 		time_left = i;
@@ -188,7 +188,7 @@ void input() {
 }
 
 void start() {
-	while (true){
+	while (true) {
 		bool temp = true;
 		cout << "choose a level of difficulty for the game(print 1, 2 or 3)\n";
 		int tmp;
@@ -239,7 +239,7 @@ void start() {
 }
 
 bool end() {
-	while (true){
+	while (true) {
 		bool find = true;
 		if (len > best)
 			best = len;
@@ -266,5 +266,5 @@ bool end() {
 		}
 		if (find == true)
 			break;
-	}	
+	}
 }
